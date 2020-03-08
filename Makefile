@@ -23,6 +23,7 @@ system := Linux
 gcc := gcc
 luaver := 5.1
 ldflags := -shared
+cflags := -I ${pwd}/lib/milagro-crypto-c/include
 
 # ----------------
 # milagro settings
@@ -34,9 +35,20 @@ milib := ${pwd}/lib/milagro-crypto-c/lib
 ldadd += ${milib}/libamcl_paillier.a
 ldadd += ${milib}/libamcl_core.a
 
+# lua flags when not built with luarocks
+LUA_INCDIR ?= /usr/include/lua5.1
+LUA_CFLAGS ?= -fPIC
+LUA_LDFLAGS ?= -fPIC
+
 all: milagro multiparty
 
-multiparty: cflags += -I ${pwd}/lib/milagro-crypto-c/include
+debug: cflags += -O0 -ggdb -DDEBUG
+debug: milagro multiparty
+	CC="${gcc}" AR="${ar}" CFLAGS="${cflags} ${LUA_CFLAGS} -I${LUA_INCDIR}" \
+		LDFLAGS="${ldflags} ${LUA_LDFLAGS}" LDADD="${ldadd}" \
+		VERSION="${version}" \
+		make -C src
+
 multiparty:
 	CC="${gcc}" AR="${ar}" CFLAGS="${cflags} ${LUA_CFLAGS} -I${LUA_INCDIR}" \
 		LDFLAGS="${ldflags} ${LUA_LDFLAGS}" LDADD="${ldadd}" \
@@ -47,8 +59,12 @@ milagro:
 	if ! [ -r ${pwd}/lib/milagro-crypto-c/CMakeCache.txt ]; then cd ${pwd}/lib/milagro-crypto-c && CC=${gcc} LD=${ld} cmake . -DCMAKE_C_FLAGS="${cflags}" -DCMAKE_SYSTEM_NAME="${system}" -DCMAKE_AR=/usr/bin/ar -DCMAKE_C_COMPILER=${gcc} ${milagro_cmake_flags}; fi
 	if ! [ -r ${pwd}/lib/milagro-crypto-c/lib/libamcl_core.a ]; then CC=${gcc} CFLAGS="${cflags}" AR=${ar} RANLIB=${ranlib} LD=${ld} make -C ${pwd}/lib/milagro-crypto-c VERBOSE=1; fi
 
-check:
+check: cflags += -O0 -ggdb -DDEBUG
+check: milagro multiparty
 	LUAVER=${luaver} make -C src check
+
+gdb:
+	LUAVER=${luaver} make -C src gdb
 
 milagro-clean:
 	make clean -C ${pwd}/lib/milagro-crypto-c

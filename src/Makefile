@@ -22,7 +22,10 @@ all: ${SOURCES}
 	${CC} ${CFLAGS} ${SOURCES} -o multiparty.so ${LDFLAGS} ${LDADD}
 
 check:
-	lua${LUAVER} -l multiparty
+	lua${LUAVER} -l multiparty ../test/basic.lua
+
+gdb:
+	gdb --args lua${LUAVER} -l multiparty ../test/basic.lua
 
 clean:
 	rm -f *.o
