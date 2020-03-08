@@ -1,0 +1,10 @@
+prefix="/usr/local"
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: amcl
+Description: AMCL is a standards compliant C cryptographic library designed to support the Internet of Things (IoT).
+Version: 2.0.1
+Libs: -L${libdir}  -lamcl_core -lamcl_paillier
+Cflags: -I${includedir}

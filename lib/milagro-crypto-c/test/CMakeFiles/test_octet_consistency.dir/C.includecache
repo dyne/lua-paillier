@@ -1,0 +1,38 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/jrml/devel/lua-multiparty/lib/milagro-crypto-c/test/test_octet_consistency.c
+stdio.h
+-
+stdlib.h
+-
+string.h
+-
+math.h
+-
+time.h
+-
+amcl.h
+/home/jrml/devel/lua-multiparty/lib/milagro-crypto-c/test/amcl.h
+
+include/amcl.h
+stdio.h
+-
+stdlib.h
+-
+stdbool.h
+-
+inttypes.h
+-
+arch.h
+include/arch.h
+
+include/arch.h
+stdint.h
+-
+

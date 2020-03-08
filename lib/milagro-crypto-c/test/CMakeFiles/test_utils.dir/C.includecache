@@ -1,0 +1,46 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/jrml/devel/lua-multiparty/lib/milagro-crypto-c/test/test_utils.c
+stdio.h
+-
+stdlib.h
+-
+string.h
+-
+time.h
+-
+utils.h
+/home/jrml/devel/lua-multiparty/lib/milagro-crypto-c/test/utils.h
+randapi.h
+/home/jrml/devel/lua-multiparty/lib/milagro-crypto-c/test/randapi.h
+
+include/amcl.h
+stdio.h
+-
+stdlib.h
+-
+stdbool.h
+-
+inttypes.h
+-
+arch.h
+include/arch.h
+
+include/arch.h
+stdint.h
+-
+
+include/randapi.h
+amcl.h
+include/amcl.h
+
+include/utils.h
+amcl.h
+include/amcl.h
+

@@ -1,0 +1,1 @@
+/usr/bin/gcc  -std=c99 -static-libgcc -Wall -Wextra -Wno-strict-prototypes -Wunused-value -Wcast-align -Wunused-variable -Wundef -Wformat-security -Wshadow -O2  -rdynamic CMakeFiles/test_aes_encrypt_CTR_256.dir/test_aes_encrypt.c.o  -o ../bin/test_aes_encrypt_CTR_256 ../lib/libamcl_core.a 

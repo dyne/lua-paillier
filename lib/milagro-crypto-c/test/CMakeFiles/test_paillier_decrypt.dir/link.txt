@@ -1,0 +1,1 @@
+/usr/bin/gcc  -std=c99 -static-libgcc -Wall -Wextra -Wno-strict-prototypes -Wunused-value -Wcast-align -Wunused-variable -Wundef -Wformat-security -Wshadow -O2  -rdynamic CMakeFiles/test_paillier_decrypt.dir/test_paillier_decrypt.c.o  -o ../bin/test_paillier_decrypt ../lib/libamcl_core.a ../lib/libamcl_paillier.a ../lib/libamcl_core.a 

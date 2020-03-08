@@ -1,0 +1,7 @@
+* Notes
+
+** Building and binding
+
+http://lua-users.org/wiki/BindingCodeToLua
+
+http://lua-users.org/wiki/BuildingModules
