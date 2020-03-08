@@ -27,6 +27,17 @@
 #include <lauxlib.h>
 
 #include <amcl.h>
+#include <paillier.h>
+
+void xxx(const char *format, ...) {
+#ifdef DEBUG
+	va_list arg;
+	va_start(arg, format);
+	vfprintf(stderr, format, arg);
+	fprintf(stderr,"\n");
+	va_end(arg);
+#endif
+}
 
 #include <randombytes.h>
 // easier name (csprng comes from amcl.h in milagro)
@@ -72,7 +83,71 @@ static int rng_int64(lua_State *L) {
 	return(1);
 }
 
-static int mp_keygen (lua_State *L) { return 0; }
+octet *o_alloc(const uint32_t size) {
+	xxx("octet alloc: %u",size);
+	octet *o = malloc(sizeof(octet));
+	if(!o) return(NULL);
+	o->val = malloc(size + 0x0f);
+	if(!o->val) { free(o); return(NULL); }
+	o->len = 0;
+	o->max = size;
+	xxx("new octet: %p",o);
+	return(o);
+}
+
+// here most internal type conversions happen
+octet* o_arg(lua_State *L, int n) {
+	xxx("octet arg: %i",n);
+	octet *o;
+	if(strncmp("string",luaL_typename(L,n),6)==0) {
+		size_t len; const char *str;
+		str = luaL_optlstring(L,n,NULL,&len);
+		if(!str || !len) {
+			luaL_error(L, "cannot get octet arg #%u", n);
+			return(NULL); }
+		// fallback to a string
+		o = o_alloc(len+1); // new
+		OCT_jstring(o, (char*)str);
+	} else {
+		luaL_error(L, "octet arg #%u not a string", n);
+		return(NULL);
+	}
+	// TODO: size boundary o->len>MAX_OCTET
+	return(o);
+}
+
+octet *o_dup(octet *o) {
+	xxx("octet dup: %p(%u)",o,o->len);
+	octet *n = o_alloc(o->len+1);
+	OCT_copy(n,o);
+	return(n);
+}
+
+void o_free(octet *o) {
+	xxx("octet free: %p",o);
+	if(o) {
+		if(o->val) free(o->val);
+		free(o);
+	}
+}
+
+static int mp_keygen (lua_State *L) {
+	xxx("keygen");
+	octet *out;
+	PAILLIER_public_key pub;
+	PAILLIER_private_key priv;
+	PAILLIER_KEY_PAIR(rng, NULL, NULL, &pub, &priv);
+	out = o_alloc(256);
+	PAILLIER_PK_toOctet(out, &pub);
+	xxx("keylen: %u",out->len);
+	char *s = malloc(out->len+2);
+	OCT_toStr(out,s);
+	s[out->len] = '\0';
+	o_free(out);
+	lua_pushstring(L,s);
+	free(s); 
+	return 1;
+}
 static int mp_encrypt (lua_State *L) { return 0; }
 static int mp_decrypt (lua_State *L) { return 0; }
 static int mp_add (lua_State *L) { return 0; }
