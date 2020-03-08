@@ -5,3 +5,5 @@
 http://lua-users.org/wiki/BindingCodeToLua
 
 http://lua-users.org/wiki/BuildingModules
+
+https://github.com/luarocks/luarocks/wiki/Creating-a-Makefile-that-plays-nice-with-LuaRocks

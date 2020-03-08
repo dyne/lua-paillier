@@ -16,7 +16,7 @@
 #  along with this program.  If not, see
 #  <http://www.gnu.org/licenses/>.
 
-SOURCES := multiparty.o
+SOURCES := multiparty.o randombytes.o
 
 all: ${SOURCES}
 	${CC} ${CFLAGS} ${SOURCES} -o multiparty.so ${LDFLAGS} ${LDADD}
@@ -29,4 +29,4 @@ clean:
 	rm -f *.so
 
 .c.o:
-	${CC} ${CFLAGS} -c $< -o $@ -DVERSION=\"${VERSION}\"
+	${CC} -I. ${CFLAGS} -c $< -o $@ -DVERSION=\"${VERSION}\"

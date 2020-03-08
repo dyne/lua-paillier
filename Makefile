@@ -22,6 +22,7 @@ ARCH=$(shell uname -m)
 system := Linux
 gcc := gcc
 luaver := 5.1
+ldflags := -shared
 
 # ----------------
 # milagro settings
@@ -35,7 +36,7 @@ ldadd += ${milib}/libamcl_core.a
 
 all: milagro multiparty
 
-# multiparty: cflags += -I/usr/include/lua${luaver} -I/usr/include/x86_64-linux-gnu/
+multiparty: cflags += -I ${pwd}/lib/milagro-crypto-c/include
 multiparty:
 	CC="${gcc}" AR="${ar}" CFLAGS="${cflags} ${LUA_CFLAGS} -I${LUA_INCDIR}" \
 		LDFLAGS="${ldflags} ${LUA_LDFLAGS}" LDADD="${ldadd}" \
