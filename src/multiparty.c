@@ -30,8 +30,6 @@
  */
 
 #include <string.h>
-#include <inttypes.h>
-#include <time.h>
 
 #include <lua.h>
 #include <lualib.h>
@@ -39,6 +37,9 @@
 
 #include <amcl.h>
 #include <paillier.h>
+
+#include <prng.h>
+#include <encoding.h>
 
 void xxx(const char *format, ...) {
 #ifdef DEBUG
@@ -50,65 +51,19 @@ void xxx(const char *format, ...) {
 #endif
 }
 
-#include <randombytes.h>
-// easier name (csprng comes from amcl.h in milagro)
-#define RNG csprng
-static uint8_t random_seed[256];
-static RNG *rng;
-
-static int rng_uint8(lua_State *L) {
-	uint8_t res = RAND_byte(rng);
-	lua_pushinteger(L, (lua_Integer)res);
-	return(1);
-}
-
-static int rng_uint16(lua_State *L) {
-	uint16_t res =
-		RAND_byte(rng)
-		| (uint32_t) RAND_byte(rng) << 8;
-	lua_pushinteger(L, (lua_Integer)res);
-	return(1);
-}
-
-static int rng_int32(lua_State *L) {
-	uint32_t res =
-		RAND_byte(rng)
-		| (uint32_t) RAND_byte(rng) << 8
-		| (uint32_t) RAND_byte(rng) << 16
-		| (uint32_t) RAND_byte(rng) << 24;
-	lua_pushinteger(L, (lua_Integer)res);
-	return(1);
-}
-
-static int rng_int64(lua_State *L) {
-	uint64_t res =
-		RAND_byte(rng)
-		| (uint64_t) RAND_byte(rng) << 8
-		| (uint64_t) RAND_byte(rng) << 16
-		| (uint64_t) RAND_byte(rng) << 24
-		| (uint64_t) RAND_byte(rng) << 32
-		| (uint64_t) RAND_byte(rng) << 40
-		| (uint64_t) RAND_byte(rng) << 48
-		| (uint64_t) RAND_byte(rng) << 56;
-	lua_pushinteger(L, (lua_Integer)res);
-	return(1);
-}
-
 octet *o_alloc(const uint32_t size) {
-	xxx("octet alloc: %u",size);
 	octet *o = malloc(sizeof(octet));
 	if(!o) return(NULL);
 	o->val = malloc(size + 0x0f);
 	if(!o->val) { free(o); return(NULL); }
 	o->len = 0;
 	o->max = size;
-	xxx("new octet: %p",o);
+	xxx("octet alloc: %p (%u)",o, size);
 	return(o);
 }
 
 // here most internal type conversions happen
 octet* o_arg(lua_State *L, int n) {
-	xxx("octet arg: %i",n);
 	octet *o;
 	if(strncmp("string",luaL_typename(L,n),6)==0) {
 		size_t len; const char *str;
@@ -116,26 +71,30 @@ octet* o_arg(lua_State *L, int n) {
 		if(!str || !len) {
 			luaL_error(L, "cannot get octet arg #%u", n);
 			return(NULL); }
+		if(!is_hex(str)) {
+			luaL_error(L, "invalid hex octet arg #%u", n);
+			return(NULL); }
 		// fallback to a string
-		o = o_alloc(len+1); // new
-		OCT_jstring(o, (char*)str);
+		o = o_alloc(hex2oct_len(str)); // new
+		hex2oct(o, str);
 	} else {
-		luaL_error(L, "octet arg #%u not a string", n);
+		luaL_error(L, "no string type octet arg #%u", n);
 		return(NULL);
 	}
-	// TODO: size boundary o->len>MAX_OCTET
+	xxx("octet arg: %i %p (%u)",n,o,o->len);
+
 	return(o);
 }
 
 octet *o_dup(octet *o) {
-	xxx("octet dup: %p(%u)",o,o->len);
+	xxx("octet dup: %p (%u)",o,o->len);
 	octet *n = o_alloc(o->len+1);
 	OCT_copy(n,o);
 	return(n);
 }
 
 void o_free(octet *o) {
-	xxx("octet free: %p",o);
+	xxx("octet free: %p (%u)",o, o->len);
 	if(o) {
 		if(o->val) free(o->val);
 		free(o);
@@ -143,17 +102,14 @@ void o_free(octet *o) {
 }
 
 static int mp_keygen (lua_State *L) {
-	xxx("keygen");
 	octet *out;
 	PAILLIER_public_key pub;
 	PAILLIER_private_key priv;
-	PAILLIER_KEY_PAIR(rng, NULL, NULL, &pub, &priv);
+	PAILLIER_KEY_PAIR(&rng, NULL, NULL, &pub, &priv);
 	out = o_alloc(256);
 	PAILLIER_PK_toOctet(out, &pub);
-	xxx("keylen: %u",out->len);
-	char *s = malloc(out->len+2);
-	OCT_toStr(out,s);
-	s[out->len] = '\0';
+	char *s = malloc( oct2hex_len(out) );
+	oct2hex(s, out);
 	o_free(out);
 	lua_pushstring(L,s);
 	free(s); 
@@ -189,17 +145,7 @@ static const struct luaL_Reg multiparty [] = {
 LUALIB_API int luaopen_multiparty (lua_State *L){
 
 	// PRNG: initialise the pseudo-random generator
-	rng = malloc(sizeof(RNG));
-	if(!rng) return 0;
-	randombytes(random_seed, 252); // last 4 bytes from time
-	uint32_t ttmp = (uint32_t) time(NULL);
-	random_seed[252] = (ttmp >> 24) & 0xff;
-	random_seed[253] = (ttmp >> 16) & 0xff;
-	random_seed[254] = (ttmp >>  8) & 0xff;
-	random_seed[255] =  ttmp & 0xff;
-	char tseed[256]; // RAND_seed is destructive, preserve seed here
-	memcpy(tseed,random_seed,256);
-	RAND_seed(rng, 256, tseed);
+	prng_init();
 
 	luaL_register(L, "multiparty", multiparty);
 	lua_pushliteral (L, "VERSION");

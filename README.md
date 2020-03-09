@@ -41,7 +41,15 @@ Designed, written and maintained by Denis "Jaromil" Roio.
 
 More contact information is on [Zenroom.org](https://zenroom.org)
 
-Special thanks to Thomas Fuerstner for the encouragement.
+This software Includes the cryptographic library Milagro released
+under the Apache License, Version 2.0
+- Copyright (C) 2016 MIRACL UK Ltd
+- Copyright (C) 2019 The Apache Software Foundation
+
+Special thanks to Thomas Fuerstner for the encouragement to dive into
+multi-party computation.
+
+## Licensing
 
 Lua Multi Party is free software distributed under the terms of the
 MIT license reproduced here. Lua Multi Party may be used for any
@@ -65,3 +73,9 @@ NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
 LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+## Support
+
+Enterprise level support contracts are available upon request, as
+well customisations and license exceptions: you are welcome to get
+in touch with us at https://zenroom.org
