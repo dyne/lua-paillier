@@ -19,9 +19,12 @@ compiler:
 addons:
   apt:
     packages:
+    - git
     - gcc
     - make
     - cmake
+    - lua5.1
+    - liblua5.1-0-dev
 
 script:
   - make check
