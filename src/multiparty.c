@@ -38,21 +38,9 @@
 #include <amcl.h>
 #include <paillier.h>
 
+#include <utils.h>
 #include <prng.h>
 #include <encoding.h>
-
-static lua_State *L = NULL; // placeholder overridden in function scope
-#define SAFE(x) if(!x) luaL_error(!L?NULL:L, "NULL variable in %s",__func__)
-
-void xxx(const char *format, ...) {
-#ifdef DEBUG
-	va_list arg;
-	va_start(arg, format);
-	vfprintf(stderr, format, arg);
-	fprintf(stderr,"\n");
-	va_end(arg);
-#endif
-}
 
 octet *o_alloc(const uint32_t size) {
 	octet *o = malloc(sizeof(octet));

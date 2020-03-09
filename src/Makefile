@@ -16,7 +16,7 @@
 #  along with this program.  If not, see
 #  <http://www.gnu.org/licenses/>.
 
-SOURCES := multiparty.o randombytes.o encoding.o prng.o
+SOURCES := multiparty.o randombytes.o encoding.o prng.o utils.o
 
 all: ${SOURCES}
 	${CC} ${CFLAGS} ${SOURCES} -o multiparty.so ${LDFLAGS} ${LDADD}
