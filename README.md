@@ -2,15 +2,11 @@
 
 This software is less entertaining than it sounds from the name `;^)`
 
-Lua Multi Party is a portable cryptographic module to execute [secure
-multi-party
-computation](https://en.wikipedia.org/wiki/Secure_multi-party_computation)
-within [distributed
-computing](https://en.wikipedia.org/wiki/Distributed_computing)
-environments, based on the [Paillier
-cryptosystem](https://en.wikipedia.org/wiki/Paillier_cryptosystem).
+Lua Multi Party is a portable cryptographic module to execute [secure multi-party computation](https://en.wikipedia.org/wiki/Secure_multi-party_computation) within [distributed computing](https://en.wikipedia.org/wiki/Distributed_computing) environments, based on the [Paillier cryptosystem](https://en.wikipedia.org/wiki/Paillier_cryptosystem).
 
 This Lua module works only on 64-bit systems.
+
+[![software by Dyne.org](https://files.dyne.org/software_by_dyne.png)](http://www.dyne.org)
 
 # Usage
 
@@ -39,8 +35,9 @@ pk = multiparty.keygen()
 
 # Credits
 
-Lua Multi Party is Copyright (C) 2020 by the Dyne.org foundation and
-is designed, written and maintained by Denis "Jaromil" Roio.
+Lua Multi Party is Copyright (C) 2020 by the Dyne.org foundation
+
+Designed, written and maintained by Denis "Jaromil" Roio.
 
 More contact information is on [Zenroom.org](https://zenroom.org)
 
