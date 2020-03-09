@@ -41,6 +41,9 @@
 #include <prng.h>
 #include <encoding.h>
 
+static lua_State *L = NULL; // placeholder overridden in function scope
+#define SAFE(x) if(!x) luaL_error(!L?NULL:L, "NULL variable in %s",__func__)
+
 void xxx(const char *format, ...) {
 #ifdef DEBUG
 	va_list arg;
@@ -87,16 +90,18 @@ octet* o_arg(lua_State *L, int n) {
 }
 
 octet *o_dup(octet *o) {
-	xxx("octet dup: %p (%u)",o,o->len);
+	SAFE(o);
 	octet *n = o_alloc(o->len+1);
 	OCT_copy(n,o);
+	xxx("octet dup: %p (%u)",o,o->len);
 	return(n);
 }
 
 void o_free(octet *o) {
-	xxx("octet free: %p (%u)",o, o->len);
+	SAFE(o);
 	if(o) {
 		if(o->val) free(o->val);
+		xxx("octet free: %p (%u)",o, o->len);
 		free(o);
 	}
 }
@@ -106,23 +111,74 @@ static int mp_keygen (lua_State *L) {
 	PAILLIER_public_key pub;
 	PAILLIER_private_key priv;
 	PAILLIER_KEY_PAIR(&rng, NULL, NULL, &pub, &priv);
-	out = o_alloc(256);
+	out = o_alloc(256); SAFE(out);
 	PAILLIER_PK_toOctet(out, &pub);
 	char *s = malloc( oct2hex_len(out) );
+	SAFE(s);
 	oct2hex(s, out);
 	o_free(out);
 	lua_pushstring(L,s);
 	free(s); 
 	return 1;
 }
-static int mp_encrypt (lua_State *L) { return 0; }
-static int mp_decrypt (lua_State *L) { return 0; }
-static int mp_add (lua_State *L) { return 0; }
+static int mp_encrypt (lua_State *L) {
+	octet *pk = o_arg(L, 1); SAFE(pk);
+	if(pk->len != 256) {
+		xxx("encrypt pk arg len != 256 (%u)",pk->len);
+		return(0); }
+	octet *plain = o_arg(L, 2); SAFE(plain);
+	PAILLIER_public_key pub;
+	PAILLIER_PK_fromOctet(&pub, pk);
+	octet *ct = o_alloc(512); SAFE(ct);
+	PAILLIER_ENCRYPT(&rng,  &pub, plain, ct, NULL);
+	char *s = malloc( oct2hex_len(ct) ); SAFE(s);
+	oct2hex(s, ct);
+	o_free(ct);
+	lua_pushstring(L,s);
+	free(s);
+	return 1;
+}
+
+static int mp_decrypt (lua_State *L) {
+	// octet *sk = o_arg(L, 1); SAFE(pk);
+	// if(sk->len != 256) {
+	// 	xxx("decrypt sk arg len != 256 (%u)",sk->len);
+	// 	return(0); }
+	// octet *ct = o_arg(L, 2); SAFE(ct);
+	// octet *pt = o_alloc(512); SAFE(pt);
+	// PAILLIER_DECRYPT(&SK, ct, pt);
+	// char *s = malloc( oct2hex_len(pt) ); SAFE(s);
+	// oct2hex(s, pt);
+	// o_free(pt);
+	// lua_pushstring(L,s);
+	// free(s);
+	// return 1;
+	return 0;
+}
+
+static int mp_add (lua_State *L) {
+	octet *pk = o_arg(L, 1); SAFE(pk);
+	if(pk->len != 256) {
+		xxx("encrypt pk arg len != 256 (%u)",pk->len);
+		return(0); }
+	octet *ct1 = o_arg(L, 2); SAFE(ct1);
+	octet *ct2 = o_arg(L, 3); SAFE(ct2);
+	octet *res = o_alloc(512); SAFE(res);
+	PAILLIER_public_key pub;
+	PAILLIER_PK_fromOctet(&pub, pk);
+	PAILLIER_ADD(&pub, ct1, ct2, res);
+	char *s = malloc( oct2hex_len(res) ); SAFE(s);
+	oct2hex(s, res);
+	o_free(res);
+	lua_pushstring(L,s);
+	free(s);
+	return 1;
+}
+
 static int mp_mult (lua_State *L) { return 0; }
 
 static const struct luaL_Reg multiparty [] = {
 
-	// mockup
 	{"keygen",  mp_keygen },
 	{"encrypt", mp_encrypt },
 	{"decrypt", mp_decrypt },
@@ -153,3 +209,4 @@ LUALIB_API int luaopen_multiparty (lua_State *L){
 	lua_settable (L, -3);
 	return 1;
 }
+

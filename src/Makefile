@@ -23,6 +23,7 @@ all: ${SOURCES}
 
 check:
 	lua${LUAVER} -l multiparty ../test/basic.lua
+	lua${LUAVER} -l multiparty ../test/add.lua
 
 gdb:
 	gdb --args lua${LUAVER} -l multiparty ../test/basic.lua
