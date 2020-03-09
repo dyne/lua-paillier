@@ -62,7 +62,7 @@ int is_hex(const char *in) {
 // returns len in bytes
 void hex2oct(octet *oct, const char *hex) {
 	register int i, j;
-	for(i=0, j=0; hex[j]!=0, oct->max < i; i++, j+=2)
+	for(i=0, j=0; hex[j]!=0, i < oct->max; i++, j+=2)
 		oct->val[i] = (hextable[(short)hex[j]]<<4) + hextable[(short)hex[j+1]];
 	oct->len = i;
 }
