@@ -1,0 +1,28 @@
+notifications:
+  email: false
+
+env:
+  global:
+    - RELEASE_BRANCH="master"
+
+language: c
+os:
+- linux
+- osx
+sudo: required
+services:
+  - docker
+git:
+  submodules: true
+compiler:
+- gcc
+addons:
+  apt:
+    packages:
+    - gcc
+    - make
+    - cmake
+
+script:
+  - make check
+
