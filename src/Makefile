@@ -16,15 +16,16 @@
 #  along with this program.  If not, see
 #  <http://www.gnu.org/licenses/>.
 
-SOURCES := multiparty.o randombytes.o encoding.o prng.o utils.o
+SOURCES := multiparty.o randombytes.o encoding.o prng.o utils.o paillier.c
 
 all: ${SOURCES}
 	${CC} ${CFLAGS} ${SOURCES} -o multiparty.so ${LDFLAGS} ${LDADD}
 
 check:
-	lua${LUAVER} -l multiparty ../test/basic.lua
+	lua${LUAVER} -l multiparty ../test/keygen.lua
 	lua${LUAVER} -l multiparty ../test/add.lua
 	lua${LUAVER} -l multiparty ../test/mult.lua
+	lua${LUAVER} -l multiparty ../test/decrypt.lua
 
 gdb:
 	gdb --args lua${LUAVER} -l multiparty ../test/basic.lua

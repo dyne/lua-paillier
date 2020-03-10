@@ -29,9 +29,22 @@
  *
  */
 
+#include <stdio.h>
+#include <stdarg.h>
+
 #include <lua.h>
+#include <lualib.h>
+#include <lauxlib.h>
 
 static lua_State *L = NULL; // placeholder overridden in function scope
+
+void err(const char *format, ...) {
+	va_list arg;
+	va_start(arg, format);
+	vfprintf(stderr, format, arg);
+	va_end(arg);
+	luaL_error(L, "\nfatal error, operation aborted\n");
+}
 
 void xxx(const char *format, ...) {
 #ifdef DEBUG

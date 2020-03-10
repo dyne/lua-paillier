@@ -1,6 +1,5 @@
 -- test vectors from milagro
 print("TEST HOMOMORPHIC ADDITION")
-print()
 function runtest()
    assert( multiparty.add(N, CIPHERTEXT1, CIPHERTEXT2) == CIPHERTEXT )
 end

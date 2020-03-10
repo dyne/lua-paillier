@@ -32,9 +32,13 @@
 #ifndef __UTILS_H__
 #define __UTILS_H__
 
+#include <lua.h>
+#include <lualib.h>
+#include <lauxlib.h>
+
 static lua_State *L; // placeholder overridden in function scope
 #define SAFE(x) if(!x) luaL_error(!L?NULL:L, "NULL variable in %s",__func__)
-
+void err(const char *format, ...);
 void xxx(const char *format, ...);
 
 #endif

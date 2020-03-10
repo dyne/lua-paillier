@@ -24,6 +24,7 @@ addons:
     - make
     - cmake
     - lua5.1
+    - luarocks
     - liblua5.1-0-dev
 
 script:

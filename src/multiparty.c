@@ -38,7 +38,7 @@
 #include <amcl.h>
 #include <paillier.h>
 
-#include <utils.h>
+#include <xxxutils.h>
 #include <prng.h>
 #include <encoding.h>
 
@@ -89,26 +89,42 @@ void o_free(octet *o) {
 	SAFE(o);
 	if(o) {
 		if(o->val) free(o->val);
-		xxx("octet free: %p (%u)",o, o->len);
+		xxx("octet free: %p (%u/%u)",o, o->len, o->max);
 		free(o);
 	}
 }
 
+// TODO: paillier.h
+extern void PAILLIER_SK_toOctet(octet *P, octet *Q, PAILLIER_private_key *PRIV);
+extern void PAILLIER_SK_fromOctet(PAILLIER_private_key *PRIV, octet *P, octet *Q);
+
+#define pushoctet(x) \
+	{ char *s; \
+	  s = malloc( oct2hex_len(x) ); SAFE(s); \
+	  oct2hex(s, x); lua_pushstring(L,s); free(s); }
+
+
 static int mp_keygen (lua_State *L) {
-	octet *out;
+	char *s;
+	octet *pk;
 	PAILLIER_public_key pub;
 	PAILLIER_private_key priv;
 	PAILLIER_KEY_PAIR(&rng, NULL, NULL, &pub, &priv);
-	out = o_alloc(256); SAFE(out);
-	PAILLIER_PK_toOctet(out, &pub);
-	char *s = malloc( oct2hex_len(out) );
-	SAFE(s);
-	oct2hex(s, out);
-	o_free(out);
-	lua_pushstring(L,s);
-	free(s); 
-	return 1;
+
+	pk = o_alloc(4096); SAFE(pk);
+	PAILLIER_PK_toOctet(pk, &pub);
+	pushoctet(pk); o_free(pk);
+
+	octet *P, *Q; // secret key
+	P = o_alloc(HFLEN_2048*MODBYTES_1024_58);
+	Q = o_alloc(HFLEN_2048*MODBYTES_1024_58);
+	PAILLIER_SK_toOctet(P, Q, &priv);
+	pushoctet(P); o_free(P);
+	pushoctet(Q); o_free(Q);
+
+	return 3;
 }
+
 static int mp_encrypt (lua_State *L) {
 	octet *pk = o_arg(L, 1); SAFE(pk);
 	if(pk->len != 256) {
@@ -119,29 +135,20 @@ static int mp_encrypt (lua_State *L) {
 	PAILLIER_PK_fromOctet(&pub, pk);
 	octet *ct = o_alloc(512); SAFE(ct);
 	PAILLIER_ENCRYPT(&rng,  &pub, plain, ct, NULL);
-	char *s = malloc( oct2hex_len(ct) ); SAFE(s);
-	oct2hex(s, ct);
-	o_free(ct);
-	lua_pushstring(L,s);
-	free(s);
+	pushoctet(ct); o_free(ct);
 	return 1;
 }
 
 static int mp_decrypt (lua_State *L) {
-	// octet *sk = o_arg(L, 1); SAFE(pk);
-	// if(sk->len != 256) {
-	// 	xxx("decrypt sk arg len != 256 (%u)",sk->len);
-	// 	return(0); }
-	// octet *ct = o_arg(L, 2); SAFE(ct);
-	// octet *pt = o_alloc(512); SAFE(pt);
-	// PAILLIER_DECRYPT(&SK, ct, pt);
-	// char *s = malloc( oct2hex_len(pt) ); SAFE(s);
-	// oct2hex(s, pt);
-	// o_free(pt);
-	// lua_pushstring(L,s);
-	// free(s);
-	// return 1;
-	return 0;
+	octet *P = o_arg(L, 1); SAFE(P);
+	octet *Q = o_arg(L, 2); SAFE(Q);
+	octet *ct = o_arg(L, 3); SAFE(ct);
+	PAILLIER_private_key priv;
+	PAILLIER_SK_fromOctet(&priv, P, Q);
+	octet *pt = o_alloc(256); SAFE(pt);
+	PAILLIER_DECRYPT(&priv, ct, pt);
+	pushoctet(pt); o_free(pt);
+	return 1;
 }
 
 static int mp_add (lua_State *L) {
@@ -207,7 +214,12 @@ LUALIB_API int luaopen_multiparty (lua_State *L){
 
 	// PRNG: initialise the pseudo-random generator
 	prng_init();
-
+	xxx("SIZES OF PRIMITIVES");
+	xxx("modbytes 1024_58: %u", MODBYTES_1024_58);
+	xxx("sizeof(big 1024_58): %u", sizeof(BIG_1024_58));
+	xxx("sizeof(big 512_60): %u", sizeof(BIG_512_60));
+	xxx("hflen 2048(%u)", sizeof(HFLEN_2048));
+	xxx("fflen 4096(%u)", sizeof(FFLEN_4096));
 	luaL_register(L, "multiparty", multiparty);
 	lua_pushliteral (L, "VERSION");
 	lua_pushliteral (L, VERSION); 
