@@ -31,6 +31,8 @@
 
 #include <stdio.h>
 #include <stdarg.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include <lua.h>
 #include <lualib.h>
@@ -47,11 +49,13 @@ void err(const char *format, ...) {
 }
 
 void xxx(const char *format, ...) {
-#ifdef DEBUG
-	va_list arg;
-	va_start(arg, format);
-	vfprintf(stderr, format, arg);
-	fprintf(stderr,"\n");
-	va_end(arg);
-#endif
+	const char *debug = getenv("DEBUG");
+	if (!debug) return;
+	if(strncmp(debug,"1",1)==0) {
+		va_list arg;
+		va_start(arg, format);
+		vfprintf(stderr, format, arg);
+		fprintf(stderr,"\n");
+		va_end(arg);
+	}
 }
