@@ -1,5 +1,5 @@
 -- test vectors from milagro
-print("TEST DECRYPTION")
+print("TEST DECRYPTION VECTORS")
 function runtest()
    assert( multiparty.decrypt(P, Q, CIPHERTEXT) == PLAINTEXT )
 end

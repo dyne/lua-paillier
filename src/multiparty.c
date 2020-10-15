@@ -126,16 +126,29 @@ static int mp_keygen (lua_State *L) {
 }
 
 static int mp_encrypt (lua_State *L) {
+	// arg 1: public key
 	octet *pk = o_arg(L, 1); SAFE(pk);
 	if(pk->len != 256) {
 		xxx("encrypt pk arg len != 256 (%u)",pk->len);
 		return(0); }
-	octet *plain = o_arg(L, 2); SAFE(plain);
 	PAILLIER_public_key pub;
 	PAILLIER_PK_fromOctet(&pub, pk);
-	octet *ct = o_alloc(512); SAFE(ct);
+	// arg 2: number
+	lua_Number n = lua_tointeger(L,2);
+	BIG_1024_58 pt[FFLEN_2048];
+	octet *plain;
+	xxx("encrypting number: %u",(int)n);
+	if(n) {
+		plain = o_alloc(FS_4096); SAFE(plain);
+		FF_2048_init(pt, (uint32_t)n ,FFLEN_2048);
+		FF_2048_toOctet(plain, pt, FFLEN_2048);
+	} else return 0;
+	// octet *plain = o_arg(L, 2); SAFE(plain);
+	octet *ct = o_alloc(FS_4096); SAFE(ct);
 	PAILLIER_ENCRYPT(&rng,  &pub, plain, ct, NULL);
-	pushoctet(ct); o_free(ct);
+	pushoctet(ct);
+	o_free(ct);
+	o_free(plain);
 	return 1;
 }
 
@@ -153,8 +166,8 @@ static int mp_decrypt (lua_State *L) {
 
 static int mp_add (lua_State *L) {
 	octet *pk = o_arg(L, 1); SAFE(pk);
-	if(pk->len != 256) {
-		xxx("encrypt pk arg len != 256 (%u)",pk->len);
+	if(pk->len != 512 && pk->len != 256) {
+		xxx("encrypt pk arg len != 512 (%u)",pk->len);
 		return(0); }
 	octet *ct1 = o_arg(L, 2); SAFE(ct1);
 	octet *ct2 = o_arg(L, 3); SAFE(ct2);
@@ -162,11 +175,8 @@ static int mp_add (lua_State *L) {
 	PAILLIER_public_key pub;
 	PAILLIER_PK_fromOctet(&pub, pk);
 	PAILLIER_ADD(&pub, ct1, ct2, res);
-	char *s = malloc( oct2hex_len(res) ); SAFE(s);
-	oct2hex(s, res);
+	pushoctet(res);
 	o_free(res);
-	lua_pushstring(L,s);
-	free(s);
 	return 1;
 }
 

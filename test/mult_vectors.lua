@@ -1,5 +1,5 @@
 -- test vectors from milagro
-print("TEST HOMOMORPHIC MULTIPLICATION")
+print("TEST HOMOMORPHIC MULTIPLICATION VECTORS")
 function runtest()
    assert( multiparty.mult(N, CIPHERTEXT1, PLAINTEXT2) == CIPHERTEXT )
 end

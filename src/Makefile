@@ -23,9 +23,10 @@ all: ${SOURCES}
 
 check:
 	lua${LUAVER} -l multiparty ../test/keygen.lua
-	lua${LUAVER} -l multiparty ../test/add.lua
-	lua${LUAVER} -l multiparty ../test/mult.lua
-	lua${LUAVER} -l multiparty ../test/decrypt.lua
+	lua${LUAVER} -l multiparty ../test/add_vectors.lua
+	lua${LUAVER} -l multiparty ../test/mult_vectors.lua
+	lua${LUAVER} -l multiparty ../test/decrypt_vectors.lua
+	lua${LUAVER} -l multiparty ../test/addition.lua
 
 gdb:
 	gdb --args lua${LUAVER} -l multiparty ../test/basic.lua
