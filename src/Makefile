@@ -27,6 +27,7 @@ check:
 	lua${LUAVER} -l multiparty ../test/mult_vectors.lua
 	lua${LUAVER} -l multiparty ../test/decrypt_vectors.lua
 	lua${LUAVER} -l multiparty ../test/addition.lua
+	lua${LUAVER} -l multiparty ../test/multiplication.lua
 
 gdb:
 	gdb --args lua${LUAVER} -l multiparty ../test/basic.lua

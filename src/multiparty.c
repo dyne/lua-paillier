@@ -182,8 +182,8 @@ static int mp_add (lua_State *L) {
 
 static int mp_mult (lua_State *L) {
 	octet *pk = o_arg(L, 1); SAFE(pk);
-	if(pk->len != 256) {
-		xxx("encrypt pk arg len != 256 (%u)",pk->len);
+	if(pk->len != 512 && pk->len != 256) {
+		xxx("encrypt pk arg len != 512 (%u)",pk->len);
 		return(0); }
 	octet *ct1 = o_arg(L, 2); SAFE(ct1);
 	octet *pt2 = o_arg(L, 3); SAFE(pt2);
@@ -191,11 +191,8 @@ static int mp_mult (lua_State *L) {
 	PAILLIER_public_key pub;
 	PAILLIER_PK_fromOctet(&pub, pk);
 	PAILLIER_MULT(&pub, ct1, pt2, res);
-	char *s = malloc( oct2hex_len(res) ); SAFE(s);
-	oct2hex(s, res);
+	pushoctet(res);
 	o_free(res);
-	lua_pushstring(L,s);
-	free(s);
 	return 1;
 }
 
@@ -206,7 +203,6 @@ static const struct luaL_Reg multiparty [] = {
 	{"decrypt", mp_decrypt },
 	{"add",     mp_add },  // Homomorphic addition of plaintexts
 	{"mult",    mp_mult }, // Homomorphic multipication of plaintexts
-
 	// random
 	{"random_int8",  rng_uint8  },
 	{"random_int16", rng_uint16 },
