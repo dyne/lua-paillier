@@ -1,4 +1,4 @@
-LIBRARY lua-multiparty.dll
+LIBRARY lua-paillier.dll
 VERSION 0.1.0
 EXPORTS
-luaopen_multiparty
+luaopen_paillier

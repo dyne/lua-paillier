@@ -1,8 +1,6 @@
-# Lua Multi Party
+# Lua Paillier
 
-This software is less entertaining than it sounds from the name `;^)`
-
-Lua Multi Party is a portable cryptographic module to execute [secure multi-party computation](https://en.wikipedia.org/wiki/Secure_multi-party_computation) within [distributed computing](https://en.wikipedia.org/wiki/Distributed_computing) environments, based on the [Paillier cryptosystem](https://en.wikipedia.org/wiki/Paillier_cryptosystem).
+Lua Paillier is a portable cryptographic module to execute homomorphic computations based on the [Paillier cryptosystem](https://en.wikipedia.org/wiki/Paillier_cryptosystem).
 
 This Lua module works only on 64-bit systems.
 
@@ -13,7 +11,7 @@ This Lua module works only on 64-bit systems.
 Build:
 
 ```
-luarocks build multiparty-scm-1.rockspec
+luarocks build paillier-scm-1.rockspec
 ```
 
 Test:
@@ -23,19 +21,19 @@ make check
 
 Launch:
 ```
-lua -l multiparty
+lua -l paillier
 ```
 
 Use:
 ```
-pk = multiparty.keygen()
+pk = paillier.keygen()
 ```
 
 ## WORK IN PROGRESS
 
 # Credits
 
-Lua Multi Party is Copyright (C) 2020 by the Dyne.org foundation
+Lua Paillier is Copyright (C) 2020-2023 by the Dyne.org foundation
 
 Designed, written and maintained by Denis "Jaromil" Roio.
 
@@ -46,12 +44,11 @@ under the Apache License, Version 2.0
 - Copyright (C) 2016 MIRACL UK Ltd
 - Copyright (C) 2019 The Apache Software Foundation
 
-Special thanks to Thomas Fuerstner for the encouragement to dive into
-multi-party computation.
+Special thanks to Thomas Fuerstner.
 
 ## Licensing
 
-Lua Multi Party is free software distributed under the terms of the
+Lua Paillier is free software distributed under the terms of the
 MIT license reproduced here. Lua Multi Party may be used for any
 purpose, including commercial purposes, at absolutely no cost.
 

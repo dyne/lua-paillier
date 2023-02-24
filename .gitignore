@@ -1,0 +1,4 @@
+# build targets
+*.[oa]
+*.so
+lib/milacro-crypto-c/build

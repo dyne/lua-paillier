@@ -1,4 +1,4 @@
-/* lua-multiparty
+/* lua-paillier
  *
  * Copyright (C) 2020 Dyne.org foundation
  * designed, written and maintained by Denis Roio <jaromil@dyne.org>

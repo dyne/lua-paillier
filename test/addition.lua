@@ -11,14 +11,14 @@ function trim(hex)
    return hex
 end
 
-pk, sp, sq = multiparty.keygen()
+pk, sp, sq = paillier.keygen()
 left = 1024
 right = 256
 result = left + right
-cl = multiparty.encrypt(pk, left)
-cr = multiparty.encrypt(pk, right)
-cres = multiparty.add(pk, cl, cr)
-plain = multiparty.decrypt(sp, sq, cres)
+cl = paillier.encrypt(pk, left)
+cr = paillier.encrypt(pk, right)
+cres = paillier.add(pk, cl, cr)
+plain = paillier.decrypt(sp, sq, cres)
 
 -- to compare: convert all to hex and trim leading zeros
 assert( trim(plain) == string.format("%x",result) )

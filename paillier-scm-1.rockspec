@@ -1,15 +1,15 @@
-package = "multiparty"
+package = "paillier"
 version = "scm-1"
 source = {
-   url = "https://github.com/dyne/lua-multiparty",
+   url = "https://github.com/dyne/lua-paillier",
 }
 description = {
-   summary = "Multi-Party Computation based on Paillier Crypto",
+   summary = "Homomorphic Computation based on Paillier Crypto",
    detailed = [[
-Portable cryptographic module to execute multi-party computations in distributed environments based on the Paillier crypto-scheme. Works only on 64bit systems.
+Portable cryptographic module to execute homomorphic computationsbased on the Paillier crypto-scheme. Works only on 64bit systems.
 ]],
    license = "MIT",
-   homepage = "https://github.com/dyne/lua-multiparty",
+   homepage = "https://github.com/dyne/lua-paillier",
 }
 supported_platforms = {
    "unix",

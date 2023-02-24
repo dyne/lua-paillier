@@ -15,13 +15,13 @@ local function addzero(hex, length)
    return hex
 end
 
-pk, sp, sq = multiparty.keygen()
+pk, sp, sq = paillier.keygen()
 left = 1000
 right = 255 -- ff
 result = left * right
-cl = multiparty.encrypt(pk, left)
-cres = multiparty.mult(pk, cl, addzero('ff',256*2))
-plain = multiparty.decrypt(sp, sq, cres)
+cl = paillier.encrypt(pk, left)
+cres = paillier.mult(pk, cl, addzero('ff',256*2))
+plain = paillier.decrypt(sp, sq, cres)
 
 -- to compare: convert all to hex and trim leading zeros
 assert( trim(plain) == string.format("%x",result) )

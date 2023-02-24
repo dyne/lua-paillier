@@ -1,4 +1,4 @@
-#  lua-multiparty (GNU Makefile build system)
+#  lua-paillier (GNU Makefile build system)
 #
 #  (c) Copyright 2020 Dyne.org foundation
 #  designed, written and maintained by Denis Roio <jaromil@dyne.org>
@@ -16,21 +16,21 @@
 #  along with this program.  If not, see
 #  <http://www.gnu.org/licenses/>.
 
-SOURCES := multiparty.o randombytes.o encoding.o prng.o utils.o paillier.c
+SOURCES := paillier.o randombytes.o encoding.o prng.o utils.o paillier-codec.o
 
 all: ${SOURCES}
-	${CC} ${CFLAGS} ${SOURCES} -o multiparty.so ${LDFLAGS} ${LDADD}
+	${CC} ${CFLAGS} ${SOURCES} -o paillier.so ${LDFLAGS} ${LDADD}
 
 check:
-	lua${LUAVER} -l multiparty ../test/keygen.lua
-	lua${LUAVER} -l multiparty ../test/add_vectors.lua
-	lua${LUAVER} -l multiparty ../test/mult_vectors.lua
-	lua${LUAVER} -l multiparty ../test/decrypt_vectors.lua
-	lua${LUAVER} -l multiparty ../test/addition.lua
-	lua${LUAVER} -l multiparty ../test/multiplication.lua
+	lua${LUAVER} -l paillier ../test/keygen.lua
+	lua${LUAVER} -l paillier ../test/add_vectors.lua
+	lua${LUAVER} -l paillier ../test/mult_vectors.lua
+	lua${LUAVER} -l paillier ../test/decrypt_vectors.lua
+	lua${LUAVER} -l paillier ../test/addition.lua
+	lua${LUAVER} -l paillier ../test/multiplication.lua
 
 gdb:
-	gdb --args lua${LUAVER} -l multiparty ../test/basic.lua
+	gdb --args lua${LUAVER} -l paillier ../test/basic.lua
 
 clean:
 	rm -f *.o

@@ -1,7 +1,7 @@
 -- test vectors from milagro
 print("TEST HOMOMORPHIC MULTIPLICATION VECTORS")
 function runtest()
-   assert( multiparty.mult(N, CIPHERTEXT1, PLAINTEXT2) == CIPHERTEXT )
+   assert( paillier.mult(N, CIPHERTEXT1, PLAINTEXT2) == CIPHERTEXT )
 end
 
 TEST = "0"
