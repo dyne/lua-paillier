@@ -24,12 +24,38 @@ Launch:
 lua -l paillier
 ```
 
-Use:
-```
-pk = paillier.keygen()
-```
+## Use:
+Homomorphic Properties of Paillier Cryptosystem:
+* The product of two ciphers decrypts to the sum of the plain text
+* The product of a cipher with a non-cipher raising g will decrypt to their sum
+* A Cipher raised to a non-cipher decrypts to their product
+* Any cipher raised to an integer k will decrypt to the product of the deciphered and k
 
-## WORK IN PROGRESS
+Addition proof:
+```
+pk, sp, sq = paillier.keygen()
+left = 1024
+right = 256
+result = left + right
+cl = paillier.encrypt(pk, left)
+cr = paillier.encrypt(pk, right)
+cres = paillier.add(pk, cl, cr)
+plain = paillier.decrypt(sp, sq, cres)
+```
+The hex values of `plain` and `result` are the same.
+
+Multiplication proof:
+```
+pk, sp, sq = paillier.keygen()
+left = 1000
+right = 255 -- ff
+result = left * right
+cl = paillier.encrypt(pk, left)
+cres = paillier.mult(pk, cl, addzero('ff',256*2)) -- zero padded hex
+plain = paillier.decrypt(sp, sq, cres)
+```
+Again the hex values of `plain` and `result` are the same.
+
 
 # Credits
 

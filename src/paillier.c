@@ -1,6 +1,6 @@
 /* lua-paillier
  *
- * Copyright (C) 2020 Dyne.org foundation
+ * Copyright (C) 2020-2023 Dyne.org foundation
  * designed, written and maintained by Denis Roio <jaromil@dyne.org>
  *
  * Permission is hereby granted, free of charge, to any person
