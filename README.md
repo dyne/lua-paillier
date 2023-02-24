@@ -1,5 +1,7 @@
 # Lua Paillier
 
+[![Run Tests](https://github.com/dyne/lua-paillier/actions/workflows/test.yml/badge.svg)](https://github.com/dyne/lua-paillier/actions/workflows/test.yml)
+
 Lua Paillier is a portable cryptographic module to execute homomorphic computations based on the [Paillier cryptosystem](https://en.wikipedia.org/wiki/Paillier_cryptosystem).
 
 This Lua module works only on 64-bit systems.
